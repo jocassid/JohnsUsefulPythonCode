@@ -1,5 +1,5 @@
 
-from noneValue import noneValue
+from ..noneValue import noneValue
 
 def testNoneValue():
     assert noneValue(5, 3) == 5
