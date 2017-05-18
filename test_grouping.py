@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from ..grouping import group, groupItem
+from grouping import group, groupItem
 
 def testGroupItem():
 
