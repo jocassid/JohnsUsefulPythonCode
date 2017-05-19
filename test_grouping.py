@@ -12,7 +12,7 @@ def testGroupItem():
     temp = {}
     for item in [('a', 0), ('a', 1), ('b', 2)]:
         temp = groupItem(item, [lambda x: x[0]], temp)
-    print('temp', temp)
+    #print('temp', temp)
     
     assert temp == {
         'a':[('a', 0), ('a', 1)], 
