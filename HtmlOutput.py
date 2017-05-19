@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# This file is part of https://github.com/jocassid/JohnsUsefulPythonCode
+# This file is in the public domain, be excellent to one another, party on dudes.
+
+
 OUTPUT_MODE_BUFFER = 0
 OUTPUT_MODE_STDOUT = 1
 OUTPUT_MODE_FILE = 2
