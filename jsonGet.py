@@ -1,5 +1,5 @@
 
-def navKeys(data, default, key1, *otherKeys):
+def jsonGet(data, default, key1, *otherKeys):
     """function to extract values from a dict of dicts like what is returned
     by json.load"""
     
