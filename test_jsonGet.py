@@ -65,5 +65,29 @@ def testJsonGet():
     # 3rd level is not dictionary
     assert jsonGet({'I':{'A':'foo'}}, 42, 'I', 'A', 1) == 42
     
+
+def testJsonGetWithLists():
     
+    # Top level is list
+    assert jsonGet([], 42, 0) == 42
+    
+    # index outside of list bounds
+    assert jsonGet([2, 2], 42, 2) == 42
+    
+    # 2nd level is list
+    assert jsonGet({'foo':[2,4,9]}, 42, 'foo', 1) == 4 
+    
+    # 3 levels of lists
+    data = [
+        [
+            [1, 1, 2, 3, 5],
+            [1, 1, 4, 9, 25]
+        ],
+        [
+            [2, 3, 5, 7],
+            [4, 6, 10, 14],
+            [6, 9, 15, 21]
+        ],
+    ]
+    assert jsonGet(data, 42, 1, 2, 3) == 21
 
