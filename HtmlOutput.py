@@ -4,6 +4,8 @@ OUTPUT_MODE_BUFFER = 0
 OUTPUT_MODE_STDOUT = 1
 OUTPUT_MODE_FILE = 2
 
+# modify this to leverage the 'file' argument of the print function
+
 class HtmlOutput:
         
     def __init__(self, fieldOrder):
