@@ -9,3 +9,8 @@
 4. `source bin/activate`
 5. `pip install pytest`
 
+## The modules
+* HtmlOutput.py
+* grouping.py
+* jsonGet.py - A function for extracting data from dictionary of dictionaries structures such as when extracting data from complex JSON objects.
+* noneValue.py - provides functionality similar to the NVL or IS_NULL functions found in a relational database
