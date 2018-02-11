@@ -27,9 +27,6 @@ def jsonGet(data, default, first_key, *otherKeys):
     if otherKeyCount == 0:
         return data
 
-    if not isinstance(data, dict) and not isinstance(data, list):
-        return default
-
     for i, key in enumerate(otherKeys):
         if isinstance(data, dict):
             if key not in data:
