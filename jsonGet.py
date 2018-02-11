@@ -4,7 +4,11 @@
 
 def get_json(collection, default, first_key, *other_keys):
     """function to extract values from a dict of dicts like what is returned
-    by json.load"""
+    by json.load
+
+    collection can be either a mapping or a list.
+    keys can be keys (if collection is a mapping)
+    or indexes (if collection is a list)"""
 
     if first_key is None:
         return default
