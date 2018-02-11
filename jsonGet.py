@@ -2,7 +2,7 @@
 # This file is in the public domain, be excellent to one another,
 # party on dudes.
 
-def jsonGet(data, default, first_key, *otherKeys):
+def jsonGet(data, default, first_key, *other_keys):
     """function to extract values from a dict of dicts like what is returned
     by json.load"""
 
@@ -17,11 +17,11 @@ def jsonGet(data, default, first_key, *otherKeys):
     except (KeyError, IndexError):
         return default
 
-    otherKeyCount = len(otherKeys)
+    otherKeyCount = len(other_keys)
     if otherKeyCount == 0:
         return data
 
-    for i, key in enumerate(otherKeys):
+    for i, key in enumerate(other_keys):
         try:
             data = data[key]
         except (KeyError, IndexError):
