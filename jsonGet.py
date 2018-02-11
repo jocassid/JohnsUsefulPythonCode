@@ -18,7 +18,7 @@ def jsonGet(data, default, key1, *otherKeys):
     elif isinstance(data, list):
         if len(data) == 0:
             return default
-        if key1 < 0 or key1 >= len(data):
+        if not (0 <= key1 < len(data)):
             return default
     else:
         return default
