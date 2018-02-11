@@ -22,16 +22,10 @@ def jsonGet(data, default, first_key, *otherKeys):
         return data
 
     for i, key in enumerate(otherKeys):
-        if isinstance(data, dict):
-            if key not in data:
-                return default
-        elif isinstance(data, list):
-            if not (0 <= key < len(data)):
-                return default
-        else:
+        try:
+            data = data[key]
+        except (KeyError, IndexError):
             return default
-
-        data = data[key]
 
         # if this is the last key, we've found our data
         if i == otherKeyCount - 1:
