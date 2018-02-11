@@ -10,9 +10,6 @@ def get_json(collection, default, first_key, *other_keys):
     keys can be keys (if collection is a mapping)
     or indexes (if collection is a list)"""
 
-    if first_key is None:
-        return default
-
     keys = first_key, *other_keys
 
     for key in keys:
