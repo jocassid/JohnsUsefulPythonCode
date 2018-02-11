@@ -2,7 +2,7 @@
 # This file is in the public domain, be excellent to one another,
 # party on dudes.
 
-def jsonGet(data, default, first_key, *other_keys):
+def get_json(data, default, first_key, *other_keys):
     """function to extract values from a dict of dicts like what is returned
     by json.load"""
 
@@ -18,3 +18,5 @@ def jsonGet(data, default, first_key, *other_keys):
             return default
 
     return data
+
+jsonGet = get_json
