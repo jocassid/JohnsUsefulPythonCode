@@ -16,6 +16,8 @@ def get_json(collection, default, first_key, *other_keys):
     keys = first_key, *other_keys
 
     for key in keys:
+        if isinstance(collection, str):
+            return default
         try:
             collection = collection[key]
         except (KeyError, IndexError, TypeError):
