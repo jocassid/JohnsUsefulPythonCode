@@ -1,20 +1,19 @@
-
 # This file is part of https://github.com/jocassid/JohnsUsefulPythonCode
 # This file is in the public domain, be excellent to one another, party on dudes.
 
 def jsonGet(data, default, key1, *otherKeys):
     """function to extract values from a dict of dicts like what is returned
     by json.load"""
-    
+
     if data is None:
         return default
-        
+
     if key1 is None:
         return default
-        
+
     if isinstance(data, dict):
         if key1 not in data:
-            return default        
+            return default
     elif isinstance(data, list):
         if len(data) == 0:
             return default
@@ -22,16 +21,16 @@ def jsonGet(data, default, key1, *otherKeys):
             return default
     else:
         return default
- 
+
     data = data[key1]
-    
+
     otherKeyCount = len(otherKeys)
     if otherKeyCount == 0:
         return data
-        
+
     if not isinstance(data, dict) and not isinstance(data, list):
         return default
-        
+
     for i, key in enumerate(otherKeys):
         if isinstance(data, dict):
             if key not in data:
@@ -42,13 +41,12 @@ def jsonGet(data, default, key1, *otherKeys):
             if key < 0 or key >= len(data):
                 return default
         else:
-            return default 
-            
+            return default
+
         data = data[key]
-        
+
         # if this is the last key, we've found our data
         if i == otherKeyCount - 1:
             return data
 
     return default
-            
