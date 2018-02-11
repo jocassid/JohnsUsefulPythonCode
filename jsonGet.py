@@ -27,8 +27,4 @@ def jsonGet(data, default, first_key, *other_keys):
         except (KeyError, IndexError):
             return default
 
-        # if this is the last key, we've found our data
-        if i == otherKeyCount - 1:
-            return data
-
-    return default
+    return data
