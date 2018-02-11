@@ -12,12 +12,9 @@ def jsonGet(data, default, first_key, *other_keys):
     if first_key is None:
         return default
 
-    try:
-        data = data[first_key]
-    except (KeyError, IndexError):
-        return default
+    keys = first_key, *other_keys
 
-    for key in other_keys:
+    for key in keys:
         try:
             data = data[key]
         except (KeyError, IndexError):
