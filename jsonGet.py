@@ -17,10 +17,6 @@ def jsonGet(data, default, first_key, *other_keys):
     except (KeyError, IndexError):
         return default
 
-    otherKeyCount = len(other_keys)
-    if otherKeyCount == 0:
-        return data
-
     for key in other_keys:
         try:
             data = data[key]
