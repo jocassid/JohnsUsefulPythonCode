@@ -2,28 +2,28 @@
 # This file is in the public domain, be excellent to one another,
 # party on dudes.
 
-def jsonGet(data, default, key1, *otherKeys):
+def jsonGet(data, default, first_key, *otherKeys):
     """function to extract values from a dict of dicts like what is returned
     by json.load"""
 
     if data is None:
         return default
 
-    if key1 is None:
+    if first_key is None:
         return default
 
     if isinstance(data, dict):
-        if key1 not in data:
+        if first_key not in data:
             return default
     elif isinstance(data, list):
         if len(data) == 0:
             return default
-        if not (0 <= key1 < len(data)):
+        if not (0 <= first_key < len(data)):
             return default
     else:
         return default
 
-    data = data[key1]
+    data = data[first_key]
 
     otherKeyCount = len(otherKeys)
     if otherKeyCount == 0:
