@@ -6,9 +6,6 @@ def jsonGet(data, default, first_key, *other_keys):
     """function to extract values from a dict of dicts like what is returned
     by json.load"""
 
-    if data is None:
-        return default
-
     if first_key is None:
         return default
 
@@ -17,7 +14,7 @@ def jsonGet(data, default, first_key, *other_keys):
     for key in keys:
         try:
             data = data[key]
-        except (KeyError, IndexError):
+        except (KeyError, IndexError, TypeError):
             return default
 
     return data
