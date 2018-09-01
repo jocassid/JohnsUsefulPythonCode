@@ -2,54 +2,72 @@
 
 from argparse import ArgumentParser
 from datetime import datetime
-from os.path import getmtime, isdir, isfile
+from os import system, walk
+from os.path import exists, getmtime, isdir, isfile, join 
 from time import sleep
+from sys import stderr
 
 
 class IfItMovesShootIt(object):
-    pass
-
-
-def run_command(command):
-    print("command gets run here!")
-
-def main(args):
-    last_update = datetime.now().timestamp()
-    command = args.command
     
-    files = []
-    directories = []
-    for item in args.monitor:
-        if isdir(item):
-            directories.append(item)
-            continue
-        files.append(item)
+    def __init__(self, monitor_items, command):
+        self.command = command
         
-    print('files', files)
-    print('directories', directories)
+        self.last_update = datetime.now().timestamp()
         
-    for i in range(100):
-        sleep(5)
-        
-        bail = False
-        for a_file in files:
-            mtime = getmtime(a_file)
-            if mtime <= last_update:
+        self.files = []
+        self.dirs = []
+        for path in monitor_items:
+            if not exists(path):
+                print("{} not found".format(path), file=stderr)
                 continue
-            last_update = mtime
-            run_command(command)
-            bail = True
+                
+            if isdir(path):
+                self.dirs.append(path)
+                continue
             
-        if bail:
-            continue
-
-        for a_dir in directories:
-            pass
-        
-      
-    # Travis demo of scandir (faster than os.walk and pulls back metadata)
-    # https://github.com/deeppunster/Walk_vs_Scan/blob/master/NewWalkVsScan.py
+            self.files.append(path)
+            
+    def files_modified(self):
+        for a_file in self.files:
+            mtime = getmtime(a_file)
+            if mtime > self.last_update:
+                self.last_update = mtime
+                return True
+        return False
+                
+    def dirs_modified(self):
+        for a_dir in self.dirs:
+            # TODO: find a way to leverage scandir function available in 
+            # more recent versions of Python
+            for root, dirs, files in walk(a_dir):
+                for item in dirs + files:
+                    path = join(root, item)
+                    mtime = getmtime(path)
+                    if mtime > self.last_update:
+                        self.last_update = mtime
+                        return True
+        return False
     
+    def run_command(self):
+        system(self.command)
+    
+    def monitor_loop(self):
+        for i in range(100):
+            sleep(5)
+            
+            if self.files_modified():
+                self.run_command()
+                continue
+                
+            if self.dirs_modified():
+                self.run_command()
+                continue
+            
+     
+# Travis demo of scandir (faster than os.walk and pulls back metadata)
+# https://github.com/deeppunster/Walk_vs_Scan/blob/master/NewWalkVsScan.py
+
 
 
 if __name__ == '__main__':
@@ -65,7 +83,11 @@ if __name__ == '__main__':
         '-c', '--command',
         required=True,
         help="command to run and its arguments (put in quotes)")
-    main(parser.parse_args())
+    #main(parser.parse_args())
+    args = parser.parse_args()
+    
+    iimsi = IfItMovesShootIt(args.monitor, args.command)
+    iimsi.monitor_loop()
     
 
     
