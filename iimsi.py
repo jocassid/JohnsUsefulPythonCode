@@ -2,18 +2,25 @@
 
 from argparse import ArgumentParser
 from datetime import datetime
+from logging import getLogger
 from os import system, walk
 from os.path import exists, getmtime, isdir, isfile, join 
 from time import sleep
 from sys import stderr
 
 
+logger = getLogger(__name__)
+
+
 class IfItMovesShootIt(object):
     
-    def __init__(self, monitor_items, command):
+    def __init__(self, monitor_items, command, number_recent_files=10):
         self.command = command
+        self.number_recent_files = number_recent_files
+        self.recent_files = []
         
         self.last_update = datetime.now().timestamp()
+        self.scan_start = None
         
         self.files = []
         self.dirs = []
@@ -28,11 +35,17 @@ class IfItMovesShootIt(object):
             
             self.files.append(path)
             
-    def files_modified(self):
-        for a_file in self.files:
+    def add_recent_file(self, file_path):
+        while len(self.recent_files) > self.number_recent_files + 1:
+            self.recent_files.pop(0)
+        self.recent_files.append(file_path)
+
+    def files_modified(self, file_list):
+        for a_file in file_list:
             mtime = getmtime(a_file)
             if mtime > self.last_update:
                 self.last_update = mtime
+                self.add_recent_file(a_file)
                 return True
         return False
                 
@@ -46,23 +59,39 @@ class IfItMovesShootIt(object):
                     mtime = getmtime(path)
                     if mtime > self.last_update:
                         self.last_update = mtime
+                        self.add_recent_file(path)
                         return True
         return False
-    
+
+    def report_scan_elapsed(self):
+        elapsed = datetime.now() - self.scan_start
+        logger.debug("scan took {}".format(elapsed))
+
     def run_command(self):
+        self.report_scan_elapsed()
+        logger.debug('run {}'.format(self.command))
         system(self.command)
     
     def monitor_loop(self):
         for i in range(100):
+            
             sleep(5)
             
-            if self.files_modified():
+            self.scan_start = datetime.now()
+            
+            if self.files_modified(self.recent_files):
+                self.run_command()
+                continue
+            
+            if self.files_modified(self.files):
                 self.run_command()
                 continue
                 
             if self.dirs_modified():
                 self.run_command()
                 continue
+                
+            self.report_scan_elapsed()
             
      
 # Travis demo of scandir (faster than os.walk and pulls back metadata)
