@@ -17,7 +17,6 @@ def get_json(collection, default, *keys):
             collection = collection[key]
         except (KeyError, IndexError, TypeError):
             return default
-
     return collection
 
 jsonGet = get_json
