@@ -5,41 +5,50 @@
 
 from grouping import group, groupItem
 
+
 def testGroupItem():
 
     assert ['a'] == groupItem('a', [], [])
     
     temp = groupItem('a', [], [])
-    assert ['a','b'] == groupItem('b', [], temp)
+    assert ['a', 'b'] == groupItem('b', [], temp)
     
     temp = {}
     for item in [('a', 0), ('a', 1), ('b', 2)]:
         temp = groupItem(item, [lambda x: x[0]], temp)
-    #print('temp', temp)
+    # print('temp', temp)
     
     assert temp == {
-        'a':[('a', 0), ('a', 1)], 
-        'b':[('b', 2)]}
+        'a': [('a', 0), ('a', 1)],
+        'b': [('b', 2)],
+    }
 
     items = [
-        ('I','A',1),
-        ('I','A',2),
-        ('I','B',1),
-        ('II','A',1),
-        ('II','B',1)]
+        ('I', 'A', 1),
+        ('I', 'A', 2),
+        ('I', 'B', 1),
+        ('II', 'A', 1),
+        ('II', 'B', 1)
+    ]
         
     expected = {
-        'I':{
-            'A':{
-                1:[('I','A',1)],
-                2:[('I','A',2)]},
-            'B':{
-                1:[('I','B',1)]}},
-        'II':{
-            'A':{
-                1:[('II','A',1)]},
-            'B':{
-                1:[('II','B',1)]}}
+        'I': {
+            'A': {
+                1: [('I', 'A', 1)],
+                2: [('I', 'A', 2)],
+            },
+            'B': {
+                1: [('I','B',1)],
+            }
+        },
+        'II': {
+            'A': {
+                1: [('II','A',1)]
+            },
+            'B': {
+                1: [('II','B',1)]
+            }
+        }
     }
         
     actual = {}
