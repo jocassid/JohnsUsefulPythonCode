@@ -30,10 +30,8 @@ class AccumulatorDict(dict):
 
         if hasattr(accumulator_type, 'add'):
             self.append_method = getattr(accumulator_type, 'add')
-            self.concat_method = getattr(accumulator_type, '__or__')
         else:
             self.append_method = getattr(accumulator_type, 'append')
-            self.concat_method = getattr(accumulator_type, '__add__')
 
         mapping_or_iterable = mapping_or_iterable or []
         super().__init__()
