@@ -19,6 +19,7 @@ class DirectedAcyclicGraph(OrderedDict):
         self._leaf_nodes = None
         self.unvisited_nodes = None
         self.visited_nodes = None
+        self._reverse = None
 
     def _check_node(self, node):
         if node in self.visited_nodes:
@@ -61,21 +62,20 @@ class DirectedAcyclicGraph(OrderedDict):
                 if item in self._leaf_nodes:
                     self._leaf_nodes.remove(item)
 
-        if self._leaf_nodes:
-            for leaf_node in self._leaf_nodes:
-                path = self._check_node(leaf_node)
-                if path:
-                    path = ", ".join(str(n) for n in path)
-                    raise self.Error(f"Graph is cyclic. {path}")
-            self.needs_check = False
-            return
+        if not self._leaf_nodes:
+            raise self.Error(f"Graph has no leaf nodes and is cyclic.")
 
-        self.unvisited_nodes = set(self.keys())
-        while len(self.unvisited_nodes) > 0:
-            path = self._check_node(self.unvisited_nodes.pop())
+        for leaf_node in self._leaf_nodes:
+            self.visited_nodes = set()
+            path = self._check_node(leaf_node)
             if path:
                 path = ", ".join(str(n) for n in path)
-                raise self.Error(f"Graph has no leaf nodes and is cyclic. {path}")
+                raise self.Error(f"Graph is cyclic. {path}")
+        self.needs_check = False
+
+        # done checking, lets free up some memory
+        self.unvisited_nodes = None
+        self.visited_nodes = None
 
     @property
     def leaf_nodes(self):
@@ -83,5 +83,52 @@ class DirectedAcyclicGraph(OrderedDict):
             raise self.Error(
                 "call check before accessing leaf_nodes"
             )
-
         return self._leaf_nodes
+
+    @property
+    def reverse(self):
+        if self.needs_check:
+            raise self.Error(
+                "call check before accessing reverse"
+            )
+
+        self._reverse = {}
+        for key, values in self.items():
+            if values is None:
+                continue
+
+            for value in values:
+                if value not in self._reverse:
+                    self._reverse[value] = {key}
+                    continue
+                self._reverse[value].add(key)
+
+        missing_keys = set(self.keys()) - set(self._reverse)
+        for key in missing_keys:
+            self._reverse[key] = None
+
+        return self._reverse
+
+    def routes_to(self, node):
+        if self.needs_check:
+            raise self.Error(
+                "call check before calling routes_to"
+            )
+
+        if node not in self:
+            raise self.Error(
+                f"node {node} not present in this graph"
+            )
+
+        reverse = self._reverse or self.reverse
+        print(reverse)
+
+        routes = []
+        while
+        next_nodes = reverse[node]
+
+
+        return routes
+
+
+
