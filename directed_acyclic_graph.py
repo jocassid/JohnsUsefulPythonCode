@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+# This file is part of https://github.com/jocassid/JohnsUsefulPythonCode
+# This file is in the public domain, be excellent to one another, party on dudes.
 
 from collections import OrderedDict
 
@@ -123,10 +127,50 @@ class DirectedAcyclicGraph(OrderedDict):
         reverse = self._reverse or self.reverse
         print(reverse)
 
+        active_routes = [[node]]
         routes = []
-        while
-        next_nodes = reverse[node]
+        i = 0
+        while len(active_routes) > 0:
+            i += 1
+            if i > 3:
+                break
 
+            temp_active_routes = active_routes
+            active_routes = []
+
+            j = 0
+            for route in temp_active_routes:
+                j += 1
+                if j > 3:
+                    break
+
+                last_node = route[-1]
+                next_nodes = reverse[last_node]
+                print(
+                    "route={} last_node={} next_nodes={}".format(
+                        route,
+                        last_node,
+                        next_nodes,
+                    )
+                )
+
+                if next_nodes is None:
+                    routes.append(route)
+                    continue
+
+                if len(next_nodes) == 1:
+                    route.insert(0, next_nodes.pop())
+                    active_routes.append(route)
+                    continue
+
+                for next_node in next_nodes:
+                    temp_route = route.copy()
+                    temp_route.insert(0, next_node)
+                    active_routes.append(temp_route)
+
+            print("At bottom of loop")
+            print(f"   active_routes {active_routes}")
+            print(f"   routes {routes}")
 
         return routes
 

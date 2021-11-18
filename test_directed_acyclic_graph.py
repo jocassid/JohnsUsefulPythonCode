@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+# This file is part of https://github.com/jocassid/JohnsUsefulPythonCode
+# This file is in the public domain, be excellent to one another, party on dudes.
 
 from pytest import raises
 
@@ -103,19 +107,25 @@ class TestDirectedAcyclicGraph:
         actual = dag.reverse
         assert expected == actual
 
-    def test_routes(self):
-
-        dag = DirectedAcyclicGraph(
+    @staticmethod
+    def build_dag():
+        return DirectedAcyclicGraph(
             a=('c',),
             b=('c',),
             c=('d',),
             d=None,
         )
 
+    def test_routes_to__not_checked(self):
+        dag = self.build_dag()
+
         with raises(DirectedAcyclicGraph.Error) as exec_info:
             junk = dag.routes_to('a')
         message = 'call check before calling routes_to'
         assert message == str(exec_info.value)
+
+    def test_routes_to__node_not_present(self):
+        dag = self.build_dag()
         dag.check()
 
         with raises(DirectedAcyclicGraph.Error) as exec_info:
@@ -123,13 +133,26 @@ class TestDirectedAcyclicGraph:
         message = 'node e not present in this graph'
         assert message == str(exec_info.value)
 
+    def test_routes_to__starting_at_leaf(self):
+        dag = self.build_dag()
+        dag.check()
+
         expected = [
             ['a'],
         ]
         actual = dag.routes_to('a')
         assert expected == actual
 
+    def test_routes_to__not_at_leaf(self):
+        dag = self.build_dag()
+        dag.check()
 
+        expected = [
+            ['a', 'c'],
+            ['b', 'c'],
+        ]
+        actual = dag.routes_to('c')
+        assert expected == actual
 
     def test_shortest_route(self):
         assert False, 'later'
