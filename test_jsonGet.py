@@ -4,6 +4,7 @@
 
 from jsonGet import jsonGet
 
+
 def testJsonGet():
     assert jsonGet(None, 'default', None) == 'default'
     assert jsonGet({'a':'alpha'}, 'default', None) == 'default'
