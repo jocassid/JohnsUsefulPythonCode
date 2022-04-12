@@ -10,3 +10,4 @@ pyvenv.cfg
 .idea/
 Scripts/
 pip-selfcheck.json
+.pytest_cache/
