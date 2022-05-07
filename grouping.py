@@ -21,7 +21,6 @@ def groupItem(item, keyFuncs, stuffIn):
     """group item takes an item and sorts it into a nested group of categories
     as defined by a list of key functions."""
     keyFuncs = list(keyFuncs)
-    print("it passes the tests.  Ship it!")
     
     # Are there any more key functions.  If not we've reached the bottom level
     # where we're adding items to a list.

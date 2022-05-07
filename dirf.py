@@ -3,9 +3,10 @@
 # This file is part of https://github.com/jocassid/JohnsUsefulPythonCode
 # This file is in the public domain, be excellent to one another, party on dudes.
 
-def dirf(obj, pattern, starts_with=False, ignore_case=True):
+
+def dirf(symbols, pattern='', starts_with=False, ignore_case=True):
     """
-    :param obj:
+    :param symbols:
     :param pattern:
     :param starts_with:
     :param ignore_case:
@@ -36,7 +37,7 @@ def dirf(obj, pattern, starts_with=False, ignore_case=True):
         filter_func = startswith
 
     filtered = []
-    for symbol in dir(obj):
+    for symbol in symbols:
         symbol = transform_func(symbol)
         if filter_func(symbol, pattern):
             filtered.append(symbol)
