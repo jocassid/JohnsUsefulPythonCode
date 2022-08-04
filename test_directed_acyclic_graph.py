@@ -5,7 +5,20 @@
 
 from pytest import raises
 
-from directed_acyclic_graph import DirectedAcyclicGraph
+from directed_acyclic_graph import \
+    Graph, \
+    GraphError, \
+    DirectedAcyclicGraph, \
+    Node
+
+
+class TestGraph:
+
+    def test_init(self):
+        assert Graph(Node('a')) == {'a': Node('a')}
+
+        with raises(GraphError) as exec_info
+            Graph(Node('a', ('b',)))
 
 
 class TestDirectedAcyclicGraph:
@@ -14,14 +27,14 @@ class TestDirectedAcyclicGraph:
 
         dag = DirectedAcyclicGraph()
 
-        with raises(DirectedAcyclicGraph.Error) as exec_info:
+        with raises(GraphError) as exec_info:
             dag.check()
         message = "Graph should have at least 2 nodes"
         assert message == str(exec_info.value)
 
     def test_check_value_not_iterable(self):
         dag = DirectedAcyclicGraph(a=5, b=6)
-        with raises(DirectedAcyclicGraph.Error) as exec_info:
+        with raises(GraphError) as exec_info:
             dag.check()
         message = "Error with node a.  5 is not iterable"
         assert message == str(exec_info.value)
@@ -30,7 +43,7 @@ class TestDirectedAcyclicGraph:
 
         dag = DirectedAcyclicGraph(a=('b',), c=('d',))
 
-        with raises(DirectedAcyclicGraph.Error) as exec_info:
+        with raises(GraphError) as exec_info:
             dag.check()
         message = "Error with node a.  b not found in graph"
         assert message == str(exec_info.value)
@@ -45,7 +58,7 @@ class TestDirectedAcyclicGraph:
         )
         dag = DirectedAcyclicGraph(pairs)
 
-        with raises(DirectedAcyclicGraph.Error) as exec_info:
+        with raises(GraphError) as exec_info:
             dag.check()
         message = "Graph is cyclic. 1, 2, 3, 5, 2"
         assert message == str(exec_info.value)
@@ -59,7 +72,7 @@ class TestDirectedAcyclicGraph:
             d=('a',),
         )
 
-        with raises(DirectedAcyclicGraph.Error) as exec_info:
+        with raises(GraphError) as exec_info:
             dag.check()
         message = "Graph has no leaf nodes and is cyclic"
         assert str(exec_info.value).startswith(message)
@@ -73,7 +86,7 @@ class TestDirectedAcyclicGraph:
             d=None,
         )
 
-        with raises(DirectedAcyclicGraph.Error) as exec_info:
+        with raises(GraphError) as exec_info:
             leaf_nodes = dag.leaf_nodes
         message = "call check before accessing leaf_nodes"
         assert message == str(exec_info.value)
@@ -90,7 +103,7 @@ class TestDirectedAcyclicGraph:
             d=None,
         )
 
-        with raises(DirectedAcyclicGraph.Error) as exec_info:
+        with raises(GraphError) as exec_info:
             junk = dag.reverse
             del junk
         message = 'call check before accessing reverse'
@@ -119,7 +132,7 @@ class TestDirectedAcyclicGraph:
     def test_routes_to__not_checked(self):
         dag = self.build_dag()
 
-        with raises(DirectedAcyclicGraph.Error) as exec_info:
+        with raises(GraphError) as exec_info:
             junk = dag.routes_to('a')
         message = 'call check before calling routes_to'
         assert message == str(exec_info.value)
@@ -128,7 +141,7 @@ class TestDirectedAcyclicGraph:
         dag = self.build_dag()
         dag.check()
 
-        with raises(DirectedAcyclicGraph.Error) as exec_info:
+        with raises(GraphError) as exec_info:
             junk = dag.routes_to('e')
         message = 'node e not present in this graph'
         assert message == str(exec_info.value)
