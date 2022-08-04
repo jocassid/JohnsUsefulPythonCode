@@ -19,13 +19,13 @@ class TestDirf:
 
     def test_simple_contains(self):
         expected = ['lstrip', 'rstrip', 'strip']
-        assert expected == dirf('a', 'strip')
+        assert expected == dirf(dir('a'), 'strip')
 
     def test_case_sensitive_contains(self):
         expected = ['foo_bar']
-        assert expected == dirf(Thingy, 'bar', ignore_case=False)
+        assert expected == dirf(dir(Thingy), 'bar', ignore_case=False)
 
     def test_startswith(self):
         expected = ['title', 'translate']
-        assert expected == dirf('a', 't', starts_with=True)
+        assert expected == dirf(dir('a'), 't', starts_with=True)
 
