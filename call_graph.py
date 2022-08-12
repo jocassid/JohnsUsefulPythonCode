@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 from cmd import Cmd
 from json import loads, dumps
@@ -63,12 +64,13 @@ class CallGraph(Cmd):
         for label in sorted(self.graph.keys()):
             print(f"{label}:")
             node = self.graph[label]
-            for next_node in sorted(node.next_nodes):
+            for next_node in sorted(node.next_labels):
                 print(f"  - {next_node}")
             print()
 
     @requires_current_node
     def do_usage(self, usage_location):
+        """Add usage of node"""
         if not usage_location:
             print(f"no usage location specified")
             return False
@@ -76,10 +78,11 @@ class CallGraph(Cmd):
         if not usage_node:
             usage_node = Node(usage_location)
             self.graph[usage_location] = usage_node
-        usage_node.next_nodes.add(self.current_node.label)
+        usage_node.next_labels.add(self.current_node.label)
 
     @requires_current_node
     def do_call(self, call_str):
+        """Add call from current node"""
         if not call_str:
             print(f"no call specified")
             return False
@@ -87,7 +90,7 @@ class CallGraph(Cmd):
         if not called_node:
             called_node = Node(call_str)
             self.graph[call_str] = called_node
-        self.current_node.next_nodes.add(call_str)
+        self.current_node.next_labels.add(call_str)
 
     def do_exit(self, arg):
         """exit call_graph"""

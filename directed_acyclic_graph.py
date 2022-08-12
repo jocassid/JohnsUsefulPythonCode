@@ -11,46 +11,71 @@ class GraphError(RuntimeError):
 
 
 class Node:
-    def __init__(self, label, next_nodes):
+
+    def __init__(self, label, *next_labels, **kwargs):
         if not hasattr(label, '__hash__'):
             raise GraphError(f"label {label!r} isn't hashable")
         self.label = label
-        self.next_nodes = set(next_nodes)
+        self.next_labels = set(next_labels)
+        self.data = kwargs.get('data')
 
     def __eq__(self, other):
         if not isinstance(other, Node):
             return False
         if self.label != other.label:
             return False
-        return self.next_nodes == other.next_nodes
+        return self.next_labels == other.next_labels
 
     def to_dict(self):
         return {
             'label': self.label,
-            'next_nodes': list(self.next_nodes),
+            'next_nodes': list(self.next_labels),
         }
 
     @staticmethod
     def from_dict(temp_dict):
         node = Node(temp_dict.get('label'))
         for next_node in temp_dict.get('next_nodes', []):
-            node.next_nodes.add(next_node)
+            node.next_labels.add(next_node)
         return node
+
+
+class GraphPath(list):
+
+    def __init__(self, labels=None):
+        super().__init__()
+        self.label_set = set()
+        labels = labels or []
+        for label in labels:
+            if label in self.label_set:
+                raise GraphError(f"label {label} already in path")
+            self.label_set.add(label)
+            super().append(label)
 
 
 class Graph(dict):
 
     def __init__(self, *nodes):
-        kwargs = {n.label: n for n in nodes}
-        super().__init__(**kwargs)
-        self.checked = self.check()
+        super().__init__()
+        for node in nodes:
+            label = node.label
+            if label in self:
+                raise GraphError(
+                    f"Node labeled {label} already defined"
+                )
+            self[label] = node
+        self.check()
+        self.requires_check = False
 
     def check(self):
         all_labels = set(self.keys())
-        for label, node in self.items():
-            for next_node in node.next_nodes:
-            pass
-        return False
+        for node in self.values():
+            for next_label in node.next_labels:
+                if next_label in all_labels:
+                    continue
+                raise GraphError(
+                    f"missing Node with label {next_label}"
+                )
 
     def validate_label(self, arg_name, label):
         if label in self:
@@ -58,26 +83,28 @@ class Graph(dict):
         raise GraphError(f"{arg_name} {label} not present in graph")
 
     def get_paths_between(self, label1, label2, visited_labels=None):
-
+        print(f"paths between {label1} -> {label2}")
         self.validate_label('label1', label1)
         self.validate_label('label2', label2)
+        if label1 == label2:
+            raise GraphError("Labels are identical")
 
         node1 = self[label1]
-        next_nodes = node1.next_nodes
-        if not next_nodes:
+        next_labels = node1.next_labels
+        if not next_labels:
             return []
 
-        if label2 in next_nodes:
-            return [[label1, label2]]
+        if label2 in next_labels:
+            return [GraphPath([label1, label2])]
 
         if not visited_labels:
             visited_labels = set()
         visited_labels.add(label1)
 
         paths_out = []
-        for label in next_nodes:
-            if label in visited_labels:
-                continue
+        for label in next_labels:
+            # if label in visited_labels:
+            #     continue
             paths = self.get_paths_between(label, label2)
             if not paths:
                 continue
