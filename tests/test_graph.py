@@ -5,7 +5,7 @@
 
 from pytest import raises
 
-from directed_acyclic_graph import \
+from graph import \
     Graph, \
     GraphError, \
     GraphPath, \
@@ -42,13 +42,23 @@ class TestGraphPath:
 
         graph = GraphPath()
         assert graph == []
+        assert graph.label_set == set()
 
         graph = GraphPath(['a', 'b'])
         assert graph == ['a', 'b']
+        assert graph.label_set == {'a', 'b'}
 
     def test_insert(self):
-        graph = Graph(['a'])
+        path = GraphPath(['a'])
+        assert path.label_set == {'a'}
 
+        with raises(GraphError) as exec_info:
+            path.insert(0, 'a')
+        message = "label a already in path"
+        assert message == str(exec_info.value)
+
+        path.insert(0, '0')
+        assert path == ['0', 'a']
 
 
 class TestGraph:
@@ -130,9 +140,24 @@ class TestGraph:
             Node('c'),
         )
 
-        assert False, "Warning infinite loop!"
+        expected = sorted([
+            ['a', 'b', 'c'],
+        ])
+        actual = sorted(graph.get_paths_between('a', 'c'))
+        assert expected == actual
 
-
+    def test_get_paths_between__cyclic_graph2(self):
+        graph = Graph(
+            Node('a', 'b', 'c'),
+            Node('b', 'a', 'c'),
+            Node('c'),
+        )
+        expected = sorted([
+            ['a', 'b', 'c'],
+            ['a', 'c'],
+        ])
+        actual = sorted(graph.get_paths_between('a', 'c'))
+        assert expected == actual
 
 
 

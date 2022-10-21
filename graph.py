@@ -47,10 +47,17 @@ class GraphPath(list):
         self.label_set = set()
         labels = labels or []
         for label in labels:
-            if label in self.label_set:
-                raise GraphError(f"label {label} already in path")
+            self.check_for_duplicate(label)
             self.label_set.add(label)
             super().append(label)
+
+    def check_for_duplicate(self, label):
+        if label in self.label_set:
+            raise GraphError(f"label {label} already in path")
+
+    def insert(self, index, value):
+        self.check_for_duplicate(value)
+        super().insert(index, value)
 
 
 class Graph(dict):
@@ -78,39 +85,52 @@ class Graph(dict):
                 )
 
     def validate_label(self, arg_name, label):
+        """
+        Check whether label is present in graph
+        """
         if label in self:
             return
         raise GraphError(f"{arg_name} {label} not present in graph")
 
-    def get_paths_between(self, label1, label2, visited_labels=None):
-        print(f"paths between {label1} -> {label2}")
-        self.validate_label('label1', label1)
-        self.validate_label('label2', label2)
-        if label1 == label2:
+    def get_paths_between(self, start_label, end_label, depth=0):
+        if depth > 4:
+            return []
+
+        print(f"{depth} paths between {start_label} -> {end_label}")
+        self.validate_label('label1', start_label)
+        self.validate_label('label2', end_label)
+        if start_label == end_label:
             raise GraphError("Labels are identical")
 
-        node1 = self[label1]
+        node1 = self[start_label]
         next_labels = node1.next_labels
         if not next_labels:
             return []
 
-        if label2 in next_labels:
-            return [GraphPath([label1, label2])]
-
-        if not visited_labels:
-            visited_labels = set()
-        visited_labels.add(label1)
+        if end_label in next_labels:
+            path_out = [
+                GraphPath([start_label, end_label])
+            ]
+            return path_out
 
         paths_out = []
-        for label in next_labels:
-            # if label in visited_labels:
-            #     continue
-            paths = self.get_paths_between(label, label2)
+        for next_label in next_labels:
+            print("  bottom half of loop")
+            paths = self.get_paths_between(
+                next_label,
+                end_label,
+                depth + 1,
+            )
             if not paths:
                 continue
             for path in paths:
-                path.insert(0, label1)
-                paths_out.append(path)
+                try:
+                    path.insert(0, start_label)
+                except GraphError:
+                    pass
+                else:
+                    paths_out.append(path)
+        print(f"  paths_out is {paths_out}")
         return paths_out
 
 

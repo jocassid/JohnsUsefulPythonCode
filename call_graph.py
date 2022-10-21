@@ -4,7 +4,7 @@ from cmd import Cmd
 from json import loads, dumps
 
 
-from directed_acyclic_graph import Graph, Node
+from graph import Graph, Node
 
 
 def requires_current_node(func):
